@@ -1,28 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Text to Speech</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacker Style Text-to-Speech</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: black;
+            color: #00ff00;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 2em;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        textarea {
+            width: 90%;
+            height: 100px;
+            background: #111;
+            color: #0f0;
+            border: 2px solid #0f0;
+            padding: 10px;
+            font-size: 1.2em;
+        }
+        select, button {
+            background: black;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            padding: 10px;
+            font-size: 1em;
+            margin: 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #00ff00;
+            color: black;
+        }
+        #audioPlayer {
+            margin-top: 20px;
+            width: 80%;
+        }
+        #downloadLink {
+            display: none;
+            margin-top: 20px;
+            padding: 10px;
+            background: #00ff00;
+            color: black;
+            text-decoration: none;
+            font-size: 1.2em;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Text to Speech Converter</h1>
+    <h1>Hacker Style Text-to-Speech</h1>
     
-    <textarea id="textInput" placeholder="Enter text here..."></textarea>
-    
-    <br>
+    <textarea id="textInput" placeholder="Enter your text here..."></textarea><br>
     
     <label for="voiceSelect">Select Voice:</label>
     <select id="voiceSelect">
         <option value="male">Male</option>
         <option value="female">Female</option>
-    </select>
+    </select><br>
     
-    <br><br>
+    <button onclick="convertTextToSpeech()">Convert to Speech</button><br>
     
-    <button onclick="convertTextToSpeech()">Convert to Speech</button>
+    <audio id="audioPlayer" controls></audio><br>
     
-    <br><br>
-    
-    <audio id="audioPlayer" controls></audio>
+    <a id="downloadLink" download="speech.mp3">Download Voice</a>
 
     <script>
         function convertTextToSpeech() {
@@ -34,59 +81,7 @@
                 return;
             }
 
-            fetch("https://your-backend-url/convert", { // یہاں اپنی API کا اصل لنک لگائیں
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ text: text, voice: voice })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById("audioPlayer").src = data.audio_url;
-                } else {
-                    alert("Error: " + data.error);
-                }
-            })
-            .catch(error => console.error("Error:", error));
-        }
-    </script>
-</body>
-</html>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Text to Speech</title>
-</head>
-<body>
-    <h1>Text to Speech Converter</h1>
-    
-    <textarea id="textInput" placeholder="Enter text here..."></textarea>
-    
-    <label for="voiceSelect">Choose Voice:</label>
-    <select id="voiceSelect">
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-    </select>
-
-    <button onclick="convertTextToSpeech()">Convert to Speech</button>
-    
-    <br>
-    <audio id="audioPlayer" controls></audio>
-    <br>
-    <a id="downloadLink" style="display: none;" download="speech.mp3">Download Voice</a>
-
-    <script>
-        function convertTextToSpeech() {
-            let text = document.getElementById("textInput").value;
-            let voice = document.getElementById("voiceSelect").value;
-
-            if (!text) {
-                alert("Please enter some text!");
-                return;
-            }
-
-            fetch("https://your-backend-url/convert", { // اپنی API کا لنک لگائیں
+            fetch("https://your-backend-url/convert", { // اپنی API کا اصل لنک لگائیں
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ text: text, voice: voice })
@@ -96,11 +91,10 @@
                 if (data.success) {
                     let audioPlayer = document.getElementById("audioPlayer");
                     let downloadLink = document.getElementById("downloadLink");
-
+                    
                     audioPlayer.src = data.audio_url;
                     downloadLink.href = data.audio_url;
                     downloadLink.style.display = "block";
-                    downloadLink.innerText = "Download Voice";
                 } else {
                     alert("Error: " + data.error);
                 }
@@ -110,7 +104,4 @@
     </script>
 </body>
 </html>
-
-
-
 
