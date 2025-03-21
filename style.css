@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usama Ibrahim | Text to Speech</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Text to Speech Converter</h1>
+        <textarea id="textInput" placeholder="Enter text here..."></textarea>
+        
+        <label for="voiceSelect">Choose Voice:</label>
+        <select id="voiceSelect"></select>
+
+        <button onclick="convertTextToSpeech()">Convert to Speech</button>
+        <button id="downloadBtn" disabled>Download Audio</button>
+        
+        <audio id="audioPlayer" controls></audio>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
