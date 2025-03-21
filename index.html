@@ -86,3 +86,31 @@ function speak() {
 
 // Load voices when page loads
 window.speechSynthesis.onvoiceschanged = loadVoices;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text to Speech</title>
+</head>
+<body>
+    <h1>Text to Speech Converter</h1>
+    <textarea id="textInput" placeholder="Enter text here..."></textarea>
+    <button onclick="convertTextToSpeech()">Convert to Speech</button>
+    <br>
+    <audio id="audioPlayer" controls></audio>
+
+    <script>
+        function convertTextToSpeech() {
+            let text = document.getElementById("textInput").value;
+            if (!text) {
+                alert("Please enter some text!");
+                return;
+            }
+
+            let speech = new SpeechSynthesisUtterance(text);
+            window.speechSynthesis.speak(speech);
+        }
+    </script>
+</body>
+</html>
+
