@@ -1,0 +1,36 @@
+let synth = window.speechSynthesis;
+let voices = [];
+
+function loadVoices() {
+    voices = synth.getVoices();
+    let voiceSelect = document.getElementById("voiceSelect");
+    voiceSelect.innerHTML = "";
+
+    voices.forEach((voice, index) => {
+        let option = document.createElement("option");
+        option.value = index;
+        option.textContent = voice.name + (voice.default ? " (Default)" : "");
+        voiceSelect.appendChild(option);
+    });
+}
+
+function convertTextToSpeech() {
+    let text = document.getElementById("textInput").value;
+    let voiceIndex = document.getElementById("voiceSelect").value;
+    
+    if (!text) {
+        alert("Please enter some text!");
+        return;
+    }
+
+    let utterance = new SpeechSynthesisUtterance(text);
+    utterance.voice = voices[voiceIndex];
+
+    synth.speak(utterance);
+    
+    utterance.onend = function() {
+        alert("Speech completed!");
+    };
+}
+
+window.speechSynthesis.onvoiceschanged = loadVoices;
