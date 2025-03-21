@@ -1,106 +1,150 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usama Ibrahim | Text to Speech</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Text to Speech Website</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <h1>Text to Speech Converter</h1>
-        <textarea id="textInput" placeholder="Enter text here..."></textarea>
-        
-        <label for="voiceSelect">Choose Voice:</label>
-        <select id="voiceSelect"></select>
-
-        <button onclick="convertTextToSpeech()">Convert to Speech</button>
-        <button id="downloadBtn" disabled>Download Audio</button>
-        
-        <audio id="audioPlayer" controls></audio>
+        <textarea id="text-input" placeholder="Yahan apna text likhen (5000 words tak)..." maxlength="5000"></textarea>
+        <div class="controls">
+            <label for="voice-select">Voice Select Karein:</label>
+            <select id="voice-select">
+                <option value="male">Male Voice</option>
+                <option value="female">Female Voice</option>
+            </select>
+            <button id="speak-btn">Sunaiye</button>
+            <button id="download-btn">Voice Download Karein</button>
+        </div>
+        <div class="recommendations">
+            <h2>Recommendations</h2>
+            <ul id="recommendations-list">
+                <li>Example Recommendation 1</li>
+                <li>Example Recommendation 2</li>
+            </ul>
+        </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #121212;
-    color: white;
-    text-align: center;
-    padding: 20px;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 .container {
-    max-width: 500px;
-    margin: auto;
+    background-color: #fff;
     padding: 20px;
-    background: #1E1E1E;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
 }
 
 textarea {
     width: 100%;
-    height: 100px;
-    margin: 10px 0;
+    height: 150px;
     padding: 10px;
     border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    margin-bottom: 20px;
+    resize: vertical;
 }
 
-select, button {
-    margin: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
+.controls {
+    margin-bottom: 20px;
 }
 
 button {
-    background: #ff9800;
-    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
     border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    margin: 5px;
 }
 
-button:disabled {
-    background: gray;
-    cursor: not-allowed;
+button:hover {
+    background-color: #0056b3;
 }
-let synth = window.speechSynthesis;
+
+.recommendations {
+    text-align: left;
+}
+
+.recommendations h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.recommendations ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+// Text-to-Speech API ka istemal
+const textInput = document.getElementById('text-input');
+const voiceSelect = document.getElementById('voice-select');
+const speakBtn = document.getElementById('speak-btn');
+const downloadBtn = document.getElementById('download-btn');
+const synth = window.speechSynthesis;
+
 let voices = [];
+let selectedVoice = null;
 
+// Voices load karein
 function loadVoices() {
     voices = synth.getVoices();
-    let voiceSelect = document.getElementById("voiceSelect");
-    voiceSelect.innerHTML = "";
-
-    voices.forEach((voice, index) => {
-        let option = document.createElement("option");
-        option.value = index;
-        option.textContent = voice.name + (voice.default ? " (Default)" : "");
-        voiceSelect.appendChild(option);
-    });
+    selectedVoice = voices.find(voice => voice.name.includes('Male')); // Default male voice
 }
 
-function convertTextToSpeech() {
-    let text = document.getElementById("textInput").value;
-    let voiceIndex = document.getElementById("voiceSelect").value;
-    
-    if (!text) {
-        alert("Please enter some text!");
+// Text ko speech mein convert karein
+function speakText() {
+    if (synth.speaking) {
+        console.log('Already speaking...');
         return;
     }
-
-    let utterance = new SpeechSynthesisUtterance(text);
-    utterance.voice = voices[voiceIndex];
-
-    synth.speak(utterance);
-    
-    utterance.onend = function() {
-        alert("Speech completed!");
-    };
+    if (textInput.value !== '') {
+        const utterance = new SpeechSynthesisUtterance(textInput.value);
+        utterance.voice = selectedVoice;
+        synth.speak(utterance);
+    }
 }
 
-window.speechSynthesis.onvoiceschanged = loadVoices;
+// Voice download karein (Not supported directly, workaround needed)
+function downloadVoice() {
+    alert('Voice download feature requires a backend service.');
+}
+
+// Event listeners
+speakBtn.addEventListener('click', speakText);
+downloadBtn.addEventListener('click', downloadVoice);
+voiceSelect.addEventListener('change', () => {
+    const selectedOption = voiceSelect.value;
+    selectedVoice = voices.find(voice => voice.name.includes(selectedOption === 'male' ? 'Male' : 'Female'));
+});
+
+// Voices load hone par
+synth.onvoiceschanged = loadVoices;
+
 
