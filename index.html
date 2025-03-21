@@ -53,4 +53,64 @@
 </body>
 </html>
 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text to Speech</title>
+</head>
+<body>
+    <h1>Text to Speech Converter</h1>
+    
+    <textarea id="textInput" placeholder="Enter text here..."></textarea>
+    
+    <label for="voiceSelect">Choose Voice:</label>
+    <select id="voiceSelect">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+    </select>
+
+    <button onclick="convertTextToSpeech()">Convert to Speech</button>
+    
+    <br>
+    <audio id="audioPlayer" controls></audio>
+    <br>
+    <a id="downloadLink" style="display: none;" download="speech.mp3">Download Voice</a>
+
+    <script>
+        function convertTextToSpeech() {
+            let text = document.getElementById("textInput").value;
+            let voice = document.getElementById("voiceSelect").value;
+
+            if (!text) {
+                alert("Please enter some text!");
+                return;
+            }
+
+            fetch("https://your-backend-url/convert", { // اپنی API کا لنک لگائیں
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text: text, voice: voice })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    let audioPlayer = document.getElementById("audioPlayer");
+                    let downloadLink = document.getElementById("downloadLink");
+
+                    audioPlayer.src = data.audio_url;
+                    downloadLink.href = data.audio_url;
+                    downloadLink.style.display = "block";
+                    downloadLink.innerText = "Download Voice";
+                } else {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
+
+
+
 
