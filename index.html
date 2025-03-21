@@ -4,78 +4,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Text to Speech</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1e1e1e;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
-        textarea {
-            width: 80%;
-            height: 100px;
-            padding: 10px;
-            font-size: 16px;
-        }
-        select, button {
-            padding: 10px;
-            margin: 10px;
-            font-size: 16px;
-        }
-    </style>
+    <title>Usama Ibrahim | Text to Speech</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Text to Speech Converter</h1>
-    <textarea id="textInput" placeholder="Enter text here..."></textarea>
-    <br>
-    <select id="voiceSelect">
-        <option value="male">Male Voice</option>
-        <option value="female">Female Voice</option>
-    </select>
-    <br>
-    <button onclick="convertTextToSpeech()">Convert to Speech</button>
-    <button onclick="downloadVoice()">Download Voice</button>
-    <br>
-    <audio id="audioPlayer" controls></audio>
+    <div class="container">
+        <h1>Text to Speech Converter</h1>
+        <textarea id="textInput" placeholder="Enter text here..."></textarea>
+        
+        <label for="voiceSelect">Choose Voice:</label>
+        <select id="voiceSelect"></select>
 
-    <script>
-        function convertTextToSpeech() {
-            let text = document.getElementById("textInput").value;
-            let voiceType = document.getElementById("voiceSelect").value;
+        <button onclick="convertTextToSpeech()">Convert to Speech</button>
+        <button id="downloadBtn" disabled>Download Audio</button>
+        
+        <audio id="audioPlayer" controls></audio>
+    </div>
 
-            if (!text) {
-                alert("Please enter some text!");
-                return;
-            }
-
-            fetch(`https://api.voicerss.org/?key=YOUR_API_KEY&hl=en-us&v=${voiceType === 'male' ? 'John' : 'Amy'}&src=${encodeURIComponent(text)}`)
-            .then(response => response.blob())
-            .then(blob => {
-                let url = URL.createObjectURL(blob);
-                document.getElementById("audioPlayer").src = url;
-                document.getElementById("audioPlayer").setAttribute("data-url", url); // Store for download
-            })
-            .catch(error => console.error("Error:", error));
-        }
-
-        function downloadVoice() {
-            let audioUrl = document.getElementById("audioPlayer").getAttribute("data-url");
-            if (!audioUrl) {
-                alert("Please generate speech first!");
-                return;
-            }
-
-            let a = document.createElement("a");
-            a.href = audioUrl;
-            a.download = "speech.mp3";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
 
+body {
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.container {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    background: #1E1E1E;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+select, button {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button {
+    background: #ff9800;
+    color: white;
+    border: none;
+}
+
+button:disabled {
+    background: gray;
+    cursor: not-allowed;
+}
+let synth = window.speechSynthesis;
+let voices = [];
+
+function loadVoices() {
+    voices = synth.getVoices();
+    let voiceSelect = document.getElementById("voiceSelect");
+    voiceSelect.innerHTML = "";
+
+    voices.forEach((voice, index) => {
+        let option = document.createElement("option");
+        option.value = index;
+        option.textContent = voice.name + (voice.default ? " (Default)" : "");
+        voiceSelect.appendChild(option);
+    });
+}
+
+function convertTextToSpeech() {
+    let text = document.getElementById("textInput").value;
+    let voiceIndex = document.getElementById("voiceSelect").value;
+    
+    if (!text) {
+        alert("Please enter some text!");
+        return;
+    }
+
+    let utterance = new SpeechSynthesisUtterance(text);
+    utterance.voice = voices[voiceIndex];
+
+    synth.speak(utterance);
+    
+    utterance.onend = function() {
+        alert("Speech completed!");
+    };
+}
+
+window.speechSynthesis.onvoiceschanged = loadVoices;
 
