@@ -3,101 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text to Speech Converter</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Text-to-Speech</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; padding: 20px; }
+        h2 { color: #333; }
+        textarea { width: 80%; padding: 10px; font-size: 16px; }
+        select, button { padding: 10px; font-size: 16px; margin: 5px; }
+        button { background-color: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Text to Speech Converter</h1>
-        <textarea id="text" placeholder="Type your text here..."></textarea>
-        
-        <select id="voiceSelect"></select>
-        
-        <button onclick="speak()">Convert to Speech</button>
-        <button onclick="downloadAudio()">Download</button>
-    </div>
 
-    <script src="script.js"></script>
+    <h2>Text-to-Speech Converter</h2>
+    <textarea id="text" placeholder="Enter text here..." rows="4" cols="50"></textarea><br>
+    
+    <label>Select Voice:</label>
+    <select id="voiceSelect"></select><br>
+
+    <button onclick="speakText()">🔊 Speak</button>
+    <button onclick="downloadVoice()">⬇️ Download Voice</button>
+
+    <script>
+        let voices = [];
+
+        function loadVoices() {
+            voices = window.speechSynthesis.getVoices();
+            let voiceSelect = document.getElementById("voiceSelect");
+            voiceSelect.innerHTML = "";
+
+            voices.forEach((voice, index) => {
+                let option = document.createElement("option");
+                option.value = index;
+                option.textContent = voice.name + (voice.lang.includes("en") ? " (English)" : "");
+                voiceSelect.appendChild(option);
+            });
+        }
+
+        function speakText() {
+            let text = document.getElementById("text").value;
+            let speech = new SpeechSynthesisUtterance(text);
+            let selectedVoice = document.getElementById("voiceSelect").value;
+            speech.voice = voices[selectedVoice];
+            window.speechSynthesis.speak(speech);
+        }
+
+        function downloadVoice() {
+            alert("Download option ابھی JavaScript میں directly ممکن نہیں، اس کے لیے Python یا Server-Side Code چاہیے۔");
+        }
+
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+    </script>
+
 </body>
 </html>
-
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background: linear-gradient(to right, #4facfe, #00f2fe);
-    color: white;
-    padding: 20px;
-}
-
-.container {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    width: 50%;
-    margin: auto;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-}
-
-h1 {
-    color: #333;
-}
-
-textarea {
-    width: 100%;
-    height: 100px;
-    border: 2px solid #4facfe;
-    padding: 10px;
-}
-
-button {
-    margin-top: 10px;
-    padding: 10px;
-    border: none;
-    background: #4facfe;
-    color: white;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #00c6fb;
-}
-
-// Load available voices
-window.speechSynthesis.onvoiceschanged = function () {
-    let voices = window.speechSynthesis.getVoices();
-    let voiceSelect = document.getElementById("voiceSelect");
-    
-    voices.forEach((voice, index) => {
-        let option = document.createElement("option");
-        option.text = voice.name;
-        option.value = index;
-        voiceSelect.appendChild(option);
-    });
-};
-
-// Convert text to speech
-function speak() {
-    let text = document.getElementById("text").value;
-    let voiceIndex = document.getElementById("voiceSelect").value;
-    
-    let speech = new SpeechSynthesisUtterance(text);
-    let voices = window.speechSynthesis.getVoices();
-    speech.voice = voices[voiceIndex];
-    
-    window.speechSynthesis.speak(speech);
-}
-
-// Download the speech as an audio file
-function downloadAudio() {
-    let text = document.getElementById("text").value;
-    let speech = new SpeechSynthesisUtterance(text);
-    let voices = window.speechSynthesis.getVoices();
-    speech.voice = voices[0]; // Default voice
-
-    let audioURL = window.URL.createObjectURL(new Blob([text], { type: 'text/plain' }));
-    
-    let link = document.createElement("a");
-    link.href = audioURL;
-    link.download = "speech.txt"; // Currently downloads as text (MP3 conversion needs server-side support)
-    link.click();
-}
